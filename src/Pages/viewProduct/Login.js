@@ -1,49 +1,4 @@
-// import * as React from 'react';
-// import { AppProvider } from '@toolpad/core/AppProvider';
-// import { SignInPage } from '@toolpad/core/SignInPage';
-// import { useTheme } from '@mui/material/styles';
-
-// const providers = [{ id: 'credentials', name: 'Credentials' }];
-// // preview-start
-// const BRANDING = {
-//   logo: (
-//     <img
-//       src="https://mui.com/static/logo.svg"
-//       alt="MUI logo"
-//       style={{ height: 24 }}
-//     />
-//   ),
-//   title: 'MUI',
-// };
-// // preview-end
-
-// const signIn = async (provider) => {
-//   const promise = new Promise((resolve) => {
-//     setTimeout(() => {
-//       console.log(`Sign in with ${provider.id}`);
-//       resolve();
-//     }, 500);
-//   });
-//   return promise;
-// };
-
-// export default function BrandingSignInPage() {
-//   const theme = useTheme();
-//   return (
-//     // preview-start
-//     <AppProvider branding={BRANDING} theme={theme}>
-//       <SignInPage
-//         signIn={signIn}
-//         providers={providers}
-//         slotProps={{ emailField: { autoFocus: false }, form: { noValidate: true } }}
-//       />
-//     </AppProvider>
-//     // preview-end
-//   );
-// }
-
-
-
+  
 import React from 'react';
 import { Container, Typography, TextField, Button, Box } from '@mui/material';
 import { useState } from 'react';
@@ -53,18 +8,11 @@ const Login = () => {
     const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // const { login } = useAuth()
-  
-  //  const handleLogin = () => {
-  //   console.log('Email:', email);
-  //   console.log('Password:', password);
 
-  //   login(email, password)
-  //  }  
-   const { secureLogin } = useAuth();
+   const { login} = useAuth();
 
 const handleLogin = () => {
-  secureLogin(email, password);
+  login(email, password);
 };  
 
   return (

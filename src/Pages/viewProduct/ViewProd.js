@@ -26,11 +26,27 @@ const ViewProd = () => {
   const [product, setProduct] = useState(null);
   console.log(product, 'single product')
 
-  useEffect(() => {
-    axios.get(`https://fakestoreapi.com/products/${id}`).then(res => setProduct(res.data))
-    .catch((error) => {
-      console.log("error fetch",error);
-    })
+  // useEffect(() => {
+  //   axios.get(`http://localhost:2000/product/view/${id}`).then(res => setProduct(res.data))
+  //   .catch((error) => {
+  //     console.log("error fetch",error);
+  //   })
+   useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`http://localhost:2000/product/view/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProduct(res.data.data);  
+      } catch (error) {
+        console.error("Failed to fetch product:", error.response?.data || error.message);
+      }
+    };
+
+    fetchProduct();
 
   },[id]);
   if (!product) {

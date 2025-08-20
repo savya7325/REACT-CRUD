@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import ViewProd from './Pages/viewProduct/ViewProd';
 import Login from './Pages/viewProduct/Login';
 import AuthProvider, { useAuth } from "./Context/AuthProvider";
+import CartPage from './Pages/cartPages';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
               <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/product/view/:id" element={<ViewProd />} />
+            <Route path="/cart" element={<CartPage/>} />
           </Routes>
            
             ) : <Login/>

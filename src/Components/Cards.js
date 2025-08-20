@@ -1,48 +1,61 @@
-
-import react, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
+import { useCart } from '../Context/cartProvider';
 
 
 export default function MediaCard({data,setProd, onEdit}) {
+    const user = JSON.parse(localStorage.getItem("user")); 
+    console.log("Logged-in user from localStorage:", user);
+
  
-  console.log(data.data, 'data from props');
-  console.log(onEdit,'message')
+  // console.log(data.data, 'data from props');
+  // console.log(onEdit,'message')
 
-  // useEffect(() => {
-  //   if ( data.data && data.data.length > 0){
-  //     setProd(data.data)
-  //   }
-  // },[data.data])
 
-  const handleDelete =(id) =>{
-    console.log("btn clicked" ,id);
-    fetch(`https://fakestoreapi.com/products/${id}`, {
-      method: 'DELETE'
-    })
+const handleDelete = (id) => {
+    const token = localStorage.getItem("token");
+  // console.log("Deleting from backend:", id);
+  fetch(`http://localhost:2000/product/${id}`, {
+  method: 'DELETE',
+   headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  credentials: 'include',
+
+  })
     .then(response => response.json())
     .then(deletedItem => {
-       console.log(data)
-    const updateList = data.filter(item => item.id !== id);
-    setProd (prevList => prevList.filter(item => item.id !== id));    
-  })
-  .catch(error =>{
-    console.log("delete failed",error);
-  });
-
+      const updatedList = data.filter(item => item._id !== id);
+      setProd(updatedList);
+      alert("Product deleted successfully");
+    })
+    
+    .catch(error => {
+      console.error("Delete failed", error);
+      alert("Delete failed. You may not have admin permission.");
+    });
+    
 };
+ const { addToCart } = useCart();
+
+console.log("Logged in user role:", user?.role);
 
 
   return (
     data.map((item,id) => {
-   
+  //    console.log("User ID:", user?._id);
+  // console.log("Item Auth ID:", item.auth?._id);
+  console.log("User ID:", user?.id || user?._id);
+console.log("Item Auth ID:", item.auth?._id || item.auth);
+
       return (    
         
-        <Card key={item.id} sx={{ maxWidth: 300, margin: 2, textAlign: 'center' ,border:'1px solid  #ccc',borderRadius: '10px',
+        <Card key={item._id} sx={{ maxWidth: 300, margin: 1, textAlign: 'center' ,border:'1px solid  #ccc',borderRadius: '10px',
             boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
             padding: '10px',display: 'flex',
     flexDirection: 'column',
@@ -69,7 +82,7 @@ export default function MediaCard({data,setProd, onEdit}) {
               height: 300,width: 'auto', marginLeft: 'auto',marginRight: 'auto' }}
           /> */}
 
-          <img src={item.image} style={{height:'150px' ,width:'150px' ,objectFit:'contain' ,display:'block',margin:'10px auto' }} >
+          <img src={item.image} alt={item.title || "product image"}  style={{height:'150px' ,width:'150px' ,objectFit:'contain' ,display:'block',margin:'10px auto' }} >
           </img>
 
           <CardContent>
@@ -80,10 +93,10 @@ export default function MediaCard({data,setProd, onEdit}) {
               {item.category}
             </Typography>
      
-          <Link to={`/product/view/${item.id}`} style={{ textDecoration: 'none' }}>
+          <Link to={`/product/view/${item._id}`} style={{ textDecoration: 'none' }}>
               <button
                 style={{
-                  backgroundColor: "blue",
+                  backgroundColor: "pink",
                   color: "white",
                   border: "none",
                   borderRadius: "5px",
@@ -96,10 +109,28 @@ export default function MediaCard({data,setProd, onEdit}) {
                 View Product
               </button>
 </Link>
+
           </CardContent>
+         
+          <button
+  style={{
+    backgroundColor: "#C2185B",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    padding: "8px 12px",
+    width: "100%",
+    marginBottom: "10px",
+    cursor: "pointer",
+  }}
+  onClick={() => addToCart(item)}
+>
+  Add to Cart
+</button>
  
          <div style={{ display: 'flex', gap: '10px', padding: '0 10px 10px 10px', justifyContent: 'center' }}>
-
+          
+{(user?.role === "admin" || String(user?.id) === String(item.auth?._id || item.auth))&& (
   <button
     style={{
       backgroundColor: "red",
@@ -109,11 +140,14 @@ export default function MediaCard({data,setProd, onEdit}) {
       padding: '8px 0',
       borderRadius: '4px'
     }}
-    onClick={()=>handleDelete(item.id)}
+    onClick={()=>handleDelete(item._id)}
 
   >
+    
     Delete
   </button>
+)}
+{(user?.role === "admin" || String(user?.id) === String(item.auth?._id || item.auth))&& (
   <button
     style={{
       backgroundColor: "green",
@@ -127,6 +161,8 @@ export default function MediaCard({data,setProd, onEdit}) {
   >
     Edit
   </button>
+    )}
+    
 </div>
         </Card>
         
